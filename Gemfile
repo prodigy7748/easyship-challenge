@@ -10,6 +10,7 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'faker'
   gem 'pry'
+  gem 'factory_bot_rails'
 end
 
 group :development do
