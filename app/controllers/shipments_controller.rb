@@ -1,4 +1,6 @@
 class ShipmentsController < ApplicationController
+  require 'aftership'
+
   def index
     @shipments = Shipment.all
   end
