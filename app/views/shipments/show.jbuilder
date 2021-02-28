@@ -6,4 +6,15 @@ json.shipment do
   json.slug                 @shipment.slug
   json.created_at           @shipment.created_at.strftime('%A, %d %B %Y at%l:%M %p')
   json.items                @shipment.group_shipment_items
+
+  if @tracking["checkpoints"].present?
+    json.tracking do
+      json.status                  @tracking['data']['tracking']["tag"]
+      json.current_location        @tracking['data']['tracking']["checkpoints"].last["location"]
+      json.last_checkpoint_message @tracking['data']['tracking']["checkpoints"].last["message"]
+      json.last_checkpoint_time    @tracking['data']['tracking']["checkpoints"].last["checkpoint_time"]
+    end
+  else
+    json.tracking "No tracking information yet."
+  end
 end
