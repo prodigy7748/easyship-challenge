@@ -1,5 +1,5 @@
 json.array! @shipments do |shipment|
-  json.company_name         shipment.company.name
+  json.company_name         shipment.name
   json.origin_country       shipment.origin_country
   json.destination_country  shipment.destination_country
   json.tracking_number      shipment.tracking_number
