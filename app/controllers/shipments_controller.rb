@@ -8,7 +8,7 @@ class ShipmentsController < ApplicationController
   end
 
   def show
-    @shipment = @company.shipments.find_by!(id: params[:id])
+    @shipment = @company.shipments.find(params[:id])
 
     AfterShip.api_key = ENV['AFTERSHIP_API_KEY']
     @tracking = AfterShip::V4::Tracking.get(@shipment.slug, @shipment.tracking_number)
@@ -21,6 +21,6 @@ class ShipmentsController < ApplicationController
   private
 
   def find_company
-    @company = Company.find_by!(id: params[:company_id])
+    @company = Company.find(id: params[:company_id])
   end
 end

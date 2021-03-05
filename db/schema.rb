@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_27_151927) do
+ActiveRecord::Schema.define(version: 2021_03_05_141310) do
 
-  create_table "companies", force: :cascade do |t|
+  create_table "companies", id: :string, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "uuid"
   end
 
   create_table "shipment_items", force: :cascade do |t|
@@ -29,13 +28,13 @@ ActiveRecord::Schema.define(version: 2021_02_27_151927) do
   end
 
   create_table "shipments", force: :cascade do |t|
-    t.integer "company_id"
     t.string "destination_country"
     t.string "origin_country"
     t.string "tracking_number"
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "company_id", null: false
     t.index ["company_id"], name: "index_shipments_on_company_id"
   end
 
