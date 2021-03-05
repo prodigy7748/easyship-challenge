@@ -6,6 +6,6 @@ class Company < ApplicationRecord
   before_create :generate_uuid
 
   def generate_uuid
-    self.uuid = SecureRandom.uuid
+    self.id = SecureRandom.uuid
   end
 end
