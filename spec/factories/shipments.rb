@@ -3,7 +3,7 @@ FactoryBot.define do
     association :company
     destination_country { Faker::Address.country }
     origin_country  { Faker::Address.country }
-    tracking_number  { nil }
-    slug { nil }
+    tracking_number  { "UM459056399US" }
+    slug { "usps" }
   end
 end
