@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe ShipmentsController do
   render_views
   let(:json) { JSON.parse(response.body) }
+  let(:shipment) { FactoryBot.create(:shipment) }
 
   before do
     FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
@@ -10,10 +11,17 @@ RSpec.describe ShipmentsController do
     FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
   end
 
-  describe "get #show" do
+  context "routes" do
+    it { should route(:get, 'companies/1/shipments').to(action: :index, company_id: 1) }
+    it { should route(:get, 'companies/1/shipments/1').to(action: :show, company_id: 1, id: 1) }
+  end
 
+  context "before_action" do
+    it { should use_before_action(:find_company) }
+  end
+
+  describe "get #show" do
     context "if tracking info is available" do
-      let(:shipment) { FactoryBot.create(:shipment) }
       
       it 'can get right json format' do
         get :show, params: { company_id: shipment.company.id, id: shipment.id }

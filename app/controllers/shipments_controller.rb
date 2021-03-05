@@ -21,6 +21,6 @@ class ShipmentsController < ApplicationController
   private
 
   def find_company
-    @company = Company.find(id: params[:company_id])
+    @company = Company.find(params[:company_id])
   end
 end

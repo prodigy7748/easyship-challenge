@@ -29,4 +29,8 @@ RSpec.describe Shipment, type: :model do
     it { should validate_presence_of(:slug) }
   end
 
+  context "delegate" do
+    it { should delegate_method(:name).to(:company).with_prefix(true) }
+  end
+
 end
