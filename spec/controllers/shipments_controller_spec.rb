@@ -24,7 +24,6 @@ RSpec.describe ShipmentsController do
     context "if tracking info is available" do   
       it 'can get right json format' do
         get :show, params: { company_id: shipment.company.id, id: shipment.id }
-        
         expect(response).to have_http_status(200)
         expect(json).to eq({
           "shipment": {
@@ -34,12 +33,11 @@ RSpec.describe ShipmentsController do
             "tracking_number": shipment.tracking_number,
             "slug": shipment.slug,
             "created_at": shipment.created_at.strftime('%A, %d %B %Y at%l:%M %p'),
-            "items": shipment.group_shipment_items,
             "tracking": {
               "status": "Delivered",
               "current_location": "CLIFTON HEIGHTS, PA, 19018",
               "last_checkpoint_message": "Delivered, In/At Mailbox",
-              "last_checkpoint_time": "2021-01-09T11:14:00"
+              "last_checkpoint_time": "Saturday, 09 January 2021 at 12 AM"
             }
           }
         }.with_indifferent_access)
@@ -48,10 +46,14 @@ RSpec.describe ShipmentsController do
 
     context "if tracking info is not available yet" do
       let(:shipment) { FactoryBot.create(:shipment, "tracking_number": "fakenumber") }
+      before do
+        FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
+        FactoryBot.create_list(:shipment_item, 2, description: 'iPhone', shipment_id: shipment.id)
+        FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
+      end
 
       it "can get right json format" do
         get :show, params: { company_id: shipment.company.id, id: shipment.id }
-        
         expect(json).to eq({
           "shipment": {
             "company_id": shipment.company.id,
