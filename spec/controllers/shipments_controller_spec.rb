@@ -5,12 +5,6 @@ RSpec.describe ShipmentsController do
   let(:json) { JSON.parse(response.body) }
   let(:shipment) { FactoryBot.create(:shipment) }
 
-  before do
-    FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
-    FactoryBot.create_list(:shipment_item, 2, description: 'iPhone', shipment_id: shipment.id)
-    FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
-  end
-
   context "routes" do
     it { should route(:get, 'companies/1/shipments').to(action: :index, company_id: 1) }
     it { should route(:get, 'companies/1/shipments/1').to(action: :show, company_id: 1, id: 1) }
@@ -21,8 +15,13 @@ RSpec.describe ShipmentsController do
   end
 
   describe "get #show" do
-    context "if tracking info is available" do
-      
+    before do
+      FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
+      FactoryBot.create_list(:shipment_item, 2, description: 'iPhone', shipment_id: shipment.id)
+      FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
+    end
+
+    context "if tracking info is available" do   
       it 'can get right json format' do
         get :show, params: { company_id: shipment.company.id, id: shipment.id }
         
@@ -66,6 +65,31 @@ RSpec.describe ShipmentsController do
           }
         }.with_indifferent_access)      
       end
+    end
+  end
+
+  describe "get #index" do
+    let(:company){ FactoryBot.create(:company) }
+    let(:shipment){ FactoryBot.create(:shipment, company: company) }
+    before do
+      FactoryBot.create(:shipment_item, shipment: shipment, description: "IPhone", weight: 100.00)
+    end
+
+    it "should get shipments only belong to specific company with a right json format" do
+      get :index, params: { company_id: company.id }, as: :json
+      expect(json).to eq([
+        {
+        "company_name": shipment.company_name,
+        "origin_country": shipment.origin_country,
+        "destination_country": shipment.destination_country,
+        "tracking_number": shipment.tracking_number,
+        "items":[
+          {
+            "description": "IPhone",
+            "weight": 100.00
+          }
+        ]
+      }.with_indifferent_access])
     end
   end
 end
