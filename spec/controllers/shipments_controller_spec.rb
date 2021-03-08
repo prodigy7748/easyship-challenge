@@ -3,7 +3,11 @@ require 'rails_helper'
 RSpec.describe ShipmentsController do
   render_views
   let(:json) { JSON.parse(response.body) }
-  let(:shipment) { FactoryBot.create(:shipment) }
+  before do
+    FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
+    FactoryBot.create_list(:shipment_item, 2, description: 'iPhone', shipment_id: shipment.id)
+    FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
+  end
 
   context "routes" do
     it { should route(:get, 'companies/1/shipments').to(action: :index, company_id: 1) }
@@ -12,16 +16,11 @@ RSpec.describe ShipmentsController do
 
   context "before_action" do
     it { should use_before_action(:find_company) }
-  end
 
   describe "get #show" do
-    before do
-      FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
-      FactoryBot.create_list(:shipment_item, 2, description: 'iPhone', shipment_id: shipment.id)
-      FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
-    end
-
     context "if tracking info is available" do   
+      let(:shipment) { FactoryBot.create(:shipment) }
+      
       it 'can get right json format' do
         get :show, params: { company_id: shipment.company.id, id: shipment.id }
         expect(response).to have_http_status(200)
@@ -33,6 +32,7 @@ RSpec.describe ShipmentsController do
             "tracking_number": shipment.tracking_number,
             "slug": shipment.slug,
             "created_at": shipment.created_at.strftime('%A, %d %B %Y at%l:%M %p'),
+            "items": shipment.group_shipment_items,
             "tracking": {
               "status": "Delivered",
               "current_location": "CLIFTON HEIGHTS, PA, 19018",
@@ -46,11 +46,6 @@ RSpec.describe ShipmentsController do
 
     context "if tracking info is not available yet" do
       let(:shipment) { FactoryBot.create(:shipment, "tracking_number": "fakenumber") }
-      before do
-        FactoryBot.create_list(:shipment_item, 1, description: 'Apple Watch', shipment_id: shipment.id)
-        FactoryBot.create_list(:shipment_item, 2, description: 'iPhone', shipment_id: shipment.id)
-        FactoryBot.create_list(:shipment_item, 3, description: 'iPad', shipment_id: shipment.id)
-      end
 
       it "can get right json format" do
         get :show, params: { company_id: shipment.company.id, id: shipment.id }
