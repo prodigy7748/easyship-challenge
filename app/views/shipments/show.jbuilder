@@ -1,5 +1,6 @@
 json.shipment do
-  json.company_id           @company.id
+
+  json.company_id           @shipment.company_id
   json.destination_country  @shipment.destination_country
   json.origin_country       @shipment.origin_country
   json.tracking_number      @shipment.tracking_number
