@@ -1,6 +1,6 @@
 class ShipmentsController < ApplicationController
 
-  require 'aftership'
+  require "aftership"
 
   before_action :find_company, only: [:index, :show]
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
@@ -13,8 +13,8 @@ class ShipmentsController < ApplicationController
   def show
     @shipment = @company.shipments.find(params[:id])
 
-    AfterShip.api_key = ENV['AFTERSHIP_API_KEY']
-    @tracking = AfterShip::V4::Tracking.get(@shipment.slug, @shipment.tracking_number)['data']['tracking']
+    AfterShip.api_key = ENV["AFTERSHIP_API_KEY"]
+    @tracking = AfterShip::V4::Tracking.get(@shipment.slug, @shipment.tracking_number)["data"]["tracking"]
   end
 
   private
