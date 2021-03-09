@@ -1,14 +1,18 @@
 class ShipmentsController < ApplicationController
-
+  before_action :find_company, only: [:index, :show]
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
   def index
-    @shipments = Shipment.all
+    @shipments = @company.shipments
   end
 
   def show
-    @company = Company.find_by!(id: params[:company_id])
-    @shipment = @company.shipments.find_by!(id: params[:id])
+    @shipment = @company.shipments.find(id: params[:id])
+  end
+
+  private
+  def find_company
+    @company = Company.find(id: params[:company_id])
   end
 
   def not_found
